@@ -12,7 +12,7 @@ from database import init_db, load_users, save_users, user_exists, add_user, get
 # CONFIG
 # =============================
 
-API_BASE = "https://movie-recommendation-system-9-hftu.onrender.com"
+API_BASE = "http://127.0.0.1:8000"
 TMDB_IMG = "https://image.tmdb.org/t/p/w500"
 USER_DB  = "data/users.json"
 
