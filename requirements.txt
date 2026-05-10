@@ -15,7 +15,7 @@
 
 # google-genai==1.15.0
 
-```txt
+
 streamlit==1.45.1
 fastapi==0.115.12
 uvicorn==0.34.2
@@ -40,4 +40,4 @@ google-genai==1.15.0
 pillow==12.0.0
 tqdm==4.67.1
 tenacity==9.0.0
-```
+
