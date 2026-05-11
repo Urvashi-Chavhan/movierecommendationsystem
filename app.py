@@ -1,12 +1,12 @@
 import requests
 import streamlit as st
-import json
+#import json
 import os
 import bcrypt
 from google import genai
 # app.py ke top pe yeh hona chahiye
-from auth import hash_password, verify_password, show_login, show_signup
-from database import init_db, load_users, save_users, user_exists, add_user, get_user
+# from auth import hash_password, verify_password, show_login, show_signup
+# from database import init_db, load_users, save_users, user_exists, add_user, get_user
 
 # =============================
 # CONFIG
@@ -107,7 +107,7 @@ def verify_password(password, hashed):
 # CHATBOT HELPER  ✅ FIXED - clean single version
 # =============================
 def get_chatbot_response(conversation_history, user_message):
-    from google import genai
+    # from google import genai
 
     client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
