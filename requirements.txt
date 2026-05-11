@@ -19,6 +19,6 @@ cryptography==42.0.8
 
 google-genai==1.15.0
 
-pillow==11.2.1
+pillow==10.4.0
 tqdm==4.67.1
 tenacity==9.0.0
