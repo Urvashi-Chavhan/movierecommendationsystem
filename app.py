@@ -4,9 +4,6 @@ import json
 import os
 import bcrypt
 from google import genai
-# app.py ke top pe yeh hona chahiye
-# from auth import hash_password, verify_password, show_login, show_signup
-# from database import init_db, load_users, save_users, user_exists, add_user, get_user
 
 # =============================
 # CONFIG
@@ -104,14 +101,11 @@ def verify_password(password, hashed):
 
 
 # =============================
-# CHATBOT HELPER  ✅ FIXED - clean single version
+# CHATBOT HELPER
 # =============================
 def get_chatbot_response(conversation_history, user_message):
-    # from google import genai
-
     client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
 
-    # Build prompt with history
     prompt = """You are CineBot 🎬, an expert AI movie assistant.
 Help with movie recommendations, plots, cast info, and cinema trivia.
 Keep responses friendly, short and fun. Use emojis occasionally.
@@ -186,12 +180,21 @@ def goto_details(tmdb_id: int):
 @st.cache_data(ttl=30)
 def api_get_json(path: str, params: dict | None = None):
     try:
-        r = requests.get(f"{API_BASE}{path}", params=params, timeout=120)  # ← change 60 to 120
+        r = requests.get(f"{API_BASE}{path}", params=params, timeout=120)
         if r.status_code >= 400:
             return None, f"HTTP {r.status_code}: {r.text[:300]}"
         return r.json(), None
     except Exception as e:
         return None, f"Request failed: {e}"
+
+def get_trailer_url(tmdb_id):
+    data, err = api_get_json(f"/movie/id/{tmdb_id}/videos")
+    if err or not data:
+        return None
+    for video in data.get("results", []):
+        if video.get("type") == "Trailer" and video.get("site") == "YouTube":
+            return f"https://www.youtube.com/watch?v={video['key']}"
+    return None
 
 def poster_grid(cards, cols=6, key_prefix="grid"):
     if not cards:
@@ -469,7 +472,12 @@ def show_main_app():
                 st.write(data.get("overview") or "No overview available.")
                 st.markdown("</div>", unsafe_allow_html=True)
 
-            if data.get("backdrop_url"):
+            # ── Trailer or Backdrop ───────────────────────
+            trailer_url = get_trailer_url(tmdb_id)
+            if trailer_url:
+                st.markdown("#### 🎬 Trailer")
+                st.video(trailer_url)
+            elif data.get("backdrop_url"):
                 st.markdown("#### Backdrop")
                 st.image(data["backdrop_url"], use_container_width=True)
 
@@ -554,7 +562,3 @@ if not st.session_state.logged_in:
             show_login()
 else:
     show_main_app()
-
-
-
-# complited

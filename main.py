@@ -1,5 +1,6 @@
 import os
 import pickle
+import requests
 from contextlib import asynccontextmanager
 from typing import Optional, List, Dict, Any, Tuple
 
@@ -265,7 +266,7 @@ def load_pickles():
 
 
 # =========================
-# LIFESPAN — replaces @app.on_event("startup")
+# LIFESPAN
 # =========================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -290,6 +291,11 @@ app.add_middleware(
 # =========================
 # ROUTES
 # =========================
+@app.get("/")
+def root():
+    return {"status": "ok"}
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "movies_loaded": len(df) if df is not None else 0}
@@ -325,6 +331,15 @@ async def tmdb_search(
 @app.get("/movie/id/{tmdb_id}", response_model=TMDBMovieDetails)
 async def movie_details_route(tmdb_id: int):
     return await tmdb_movie_details(tmdb_id)
+
+
+# ✅ NEW — Trailer endpoint
+@app.get("/movie/id/{tmdb_id}/videos")
+def get_movie_videos(tmdb_id: int):
+    url = f"https://api.themoviedb.org/3/movie/{tmdb_id}/videos"
+    params = {"api_key": TMDB_API_KEY, "language": "en-US"}
+    response = requests.get(url, params=params)
+    return response.json()
 
 
 @app.get("/recommend/genre", response_model=List[TMDBMovieCard])
